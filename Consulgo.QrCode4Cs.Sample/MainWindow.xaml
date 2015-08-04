@@ -1,0 +1,73 @@
+﻿<Window x:Class="Consulgo.QrCode4Cs.Sample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:consulgo="clr-namespace:Consulgo.QrCode4Cs.Sample"
+        Title="MainWindow" MinHeight="350" MinWidth="525">
+    <Grid Margin="5">
+        <Grid.Resources>
+            <consulgo:BoolToVisibilityHiddenConverter x:Key="b2v" />
+            <system:Double x:Key="TileSize">10.0</system:Double>
+            <SolidColorBrush x:Key="TileColor" Color="Black" />
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Enter text:" />
+            <TextBox Grid.Column="1" Text="{Binding Text}"/>
+            <Button Grid.Column="2" Content="Generate" Command="{Binding GenerateCommand}"/>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Bitmap}" ToolTip="Your QR Code will be shown here">
+                <ItemsControl.LayoutTransform>
+                    <ScaleTransform 
+                        CenterX="0"
+                        CenterY="0"
+                        ScaleX="{Binding ElementName=uiZoomSlider,Path=Value}"
+                        ScaleY="{Binding ElementName=uiZoomSlider,Path=Value}" />
+                </ItemsControl.LayoutTransform>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{Binding}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Rectangle
+                                        Height="{StaticResource TileSize}"
+                                        Width="{StaticResource TileSize}"                                        
+                                        Visibility="{Binding Path=., Converter={StaticResource b2v}}"
+                                        Fill="{StaticResource TileColor}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Grid Grid.Row="2">
+            <Slider HorizontalAlignment="Right" Width="100" x:Name="uiZoomSlider"
+                    Value="1" Minimum="0.1" Maximum="4.0" ToolTip="Slide to zoom"/>
+        </Grid>
+    </Grid>
+</Window>
